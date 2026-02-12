@@ -28,8 +28,6 @@ const ChatPanel = ({ messages, onSend, isLoading, currentVersion, versions, onRo
         <div className="chat-panel">
             <div className="chat-panel__header">
                 <div className="chat-panel__title">
-                    <span className="chat-panel__logo">⚡</span>
-                    AI UI Builder
                 </div>
                 <div className="chat-panel__actions">
                     {versions.length > 0 && (

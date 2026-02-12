@@ -7,10 +7,11 @@
         "dev": "node --watch server.js"
     },
     "dependencies": {
-        "express": "^4.21.1",
-        "cors": "^2.8.5",
+        "@google/genai": "^1.40.0",
         "@google/generative-ai": "^0.21.0",
-        "uuid": "^11.0.3",
-        "dotenv": "^16.4.7"
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "express": "^4.21.1",
+        "uuid": "^11.0.3"
     }
 }

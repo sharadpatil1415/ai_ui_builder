@@ -1,18 +1,18 @@
 // ============================================================
 // Planner Agent — Interprets user intent → structured plan
 // ============================================================
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 import { PLANNER_PROMPT } from './prompts.js';
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
 export async function runPlanner(userPrompt) {
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
-
+    const genAI = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const fullPrompt = PLANNER_PROMPT + userPrompt;
 
-    const result = await model.generateContent(fullPrompt);
-    const responseText = result.response.text().trim();
+    const result = await genAI.models.generateContent({
+        model: 'gemini-flash-latest',
+        contents: fullPrompt
+    });
+    const responseText = result.text.trim();
 
     // Extract JSON from response (handle potential markdown fences)
     let jsonStr = responseText;

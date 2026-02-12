@@ -74,14 +74,14 @@ const CodePanel = ({ code, onChange }) => {
     return (
         <div className="code-panel">
             <div className="code-panel__header">
-                <span className="code-panel__title">📝 Generated Code</span>
+                <span className="code-panel__title">Generated Code</span>
                 <div className="code-panel__actions">
                     <button
                         className="code-panel__action-btn"
                         onClick={() => navigator.clipboard.writeText(code)}
                         title="Copy code"
                     >
-                        📋 Copy
+                        Copy
                     </button>
                 </div>
             </div>

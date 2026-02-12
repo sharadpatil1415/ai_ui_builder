@@ -67,7 +67,7 @@ All styles live in `src/components/ui/design-system.css`.
 
 ### Prerequisites
 - Node.js 18+
-- A Google Gemini API key ([get one free](https://aistudio.google.com/apikey))
+- A Google Gemini API key 
 
 ### Setup
 
@@ -91,29 +91,3 @@ npm run dev
 
 Open http://localhost:5173 and start describing UIs!
 
-## 🛡️ Safety & Validation
-
-- **Component whitelist** — server-side validation rejects code with non-whitelisted components
-- **Prompt injection protection** — filters dangerous patterns before sending to LLM
-- **Code sanitization** — strips eval(), Function(), and other dangerous APIs
-- **Auto-fix** — auto-corrects import paths and missing imports
-- **Sandboxed preview** — iframe with `sandbox="allow-scripts"` attribute
-
-## ⚠️ Known Limitations
-
-- **In-memory storage** — version history is lost on server restart (no persistent DB)
-- **Single session** — no multi-user or authentication support
-- **Gemini dependency** — requires an API key and internet connection
-- **Preview sandbox** — complex interactions (like form submissions) may not work in the sandboxed iframe
-- **No undo for code edits** — manual edits in the code editor don't create version entries
-
-## 🔮 What I'd Improve With More Time
-
-- **Streaming responses** — stream AI output token-by-token for better UX
-- **Diff view** — show visual diffs between versions
-- **Component schema validation** — JSON Schema validation of the AI's structured plan
-- **Persistent storage** — SQLite or file-based version history
-- **More components** — Accordion, Tabs, Badge, Avatar, Toast, Dropdown
-- **Export** — download generated code as a ready-to-run project
-- **Static analysis** — AST-based validation instead of regex
-- **Custom themes** — allow users to swap design system variables

@@ -2,13 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 
 // Build the HTML document that will be injected into the iframe
 function buildPreviewHTML(code) {
-    // Extract component names used
-    const componentNames = ['Button', 'Card', 'Input', 'Table', 'Modal', 'Sidebar', 'Navbar', 'Chart'];
-    const usedComponents = componentNames.filter(name =>
-        code.includes(`<${name}`) || code.includes(`{${name}`)
-    );
+  // Extract component names used
+  const componentNames = ['Button', 'Card', 'Input', 'Table', 'Modal', 'Sidebar', 'Navbar', 'Chart'];
+  const usedComponents = componentNames.filter(name =>
+    code.includes(`<${name}`) || code.includes(`{${name}`)
+  );
 
-    return `<!DOCTYPE html>
+  return `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -51,33 +51,33 @@ function buildPreviewHTML(code) {
 }
 
 function stripImportsAndExports(code) {
-    let cleaned = code
-        // Remove import statements
-        .replace(/^import\s+.*?['"]\s*;?\s*$/gm, '')
-        // Replace export default with assignment
-        .replace(/export\s+default\s+function\s+(\w+)/g, 'function GeneratedUI')
-        .replace(/export\s+default\s+(\w+)\s*;?\s*$/gm, 'var GeneratedUI = $1;')
-        // Handle const/function exports
-        .replace(/export\s+default\s+/g, 'var GeneratedUI = ');
+  let cleaned = code
+    // Remove import statements
+    .replace(/^import\s+.*?['"]\s*;?\s*$/gm, '')
+    // Replace export default with assignment
+    .replace(/export\s+default\s+function\s+(\w+)/g, 'function GeneratedUI')
+    .replace(/export\s+default\s+(\w+)\s*;?\s*$/gm, 'var GeneratedUI = $1;')
+    // Handle const/function exports
+    .replace(/export\s+default\s+/g, 'var GeneratedUI = ');
 
-    // If no GeneratedUI was assigned, find the main component
-    if (!cleaned.includes('GeneratedUI')) {
-        // Try to find the last function/const component definition
-        const funcMatch = cleaned.match(/(?:function|const)\s+(\w+)\s*(?:=|\()/g);
-        if (funcMatch) {
-            const lastName = funcMatch[funcMatch.length - 1].match(/(?:function|const)\s+(\w+)/)[1];
-            cleaned += `\nvar GeneratedUI = ${lastName};`;
-        } else {
-            cleaned = `function GeneratedUI() { return React.createElement('div', {className: 'ui-layout-page ui-flex-center'}, React.createElement('p', null, 'No component found in generated code')); }`;
-        }
+  // If no GeneratedUI was assigned, find the main component
+  if (!cleaned.includes('GeneratedUI')) {
+    // Try to find the last function/const component definition
+    const funcMatch = cleaned.match(/(?:function|const)\s+(\w+)\s*(?:=|\()/g);
+    if (funcMatch) {
+      const lastName = funcMatch[funcMatch.length - 1].match(/(?:function|const)\s+(\w+)/)[1];
+      cleaned += `\nvar GeneratedUI = ${lastName};`;
+    } else {
+      cleaned = `function GeneratedUI() { return React.createElement('div', {className: 'ui-layout-page ui-flex-center'}, React.createElement('p', null, 'No component found in generated code')); }`;
     }
+  }
 
-    return cleaned;
+  return cleaned;
 }
 
 function getDesignSystemCSS() {
-    // Inline the design system CSS for the iframe
-    return `
+  // Inline the design system CSS for the iframe
+  return `
 :root {
   --color-primary-50: #eff6ff;
   --color-primary-100: #dbeafe;
@@ -227,7 +227,7 @@ function getDesignSystemCSS() {
 }
 
 function getComponentDefinitions() {
-    return `
+  return `
     // ===== Fixed Component Definitions =====
     const Button = ({ variant = 'primary', size = 'md', disabled = false, onClick, children }) => {
       const className = 'ui-btn ui-btn--' + variant + ' ui-btn--' + size;
@@ -405,64 +405,64 @@ function getComponentDefinitions() {
 }
 
 const PreviewPanel = ({ code }) => {
-    const iframeRef = useRef(null);
-    const [error, setError] = useState(null);
+  const iframeRef = useRef(null);
+  const [error, setError] = useState(null);
 
-    useEffect(() => {
-        if (!code || !iframeRef.current) {
-            return;
-        }
+  useEffect(() => {
+    if (!code || !iframeRef.current) {
+      return;
+    }
 
-        setError(null);
+    setError(null);
 
-        try {
-            const html = buildPreviewHTML(code);
-            const blob = new Blob([html], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
+    try {
+      const html = buildPreviewHTML(code);
+      const blob = new Blob([html], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
 
-            iframeRef.current.src = url;
+      iframeRef.current.src = url;
 
-            return () => URL.revokeObjectURL(url);
-        } catch (err) {
-            setError(err.message);
-        }
-    }, [code]);
+      return () => URL.revokeObjectURL(url);
+    } catch (err) {
+      setError(err.message);
+    }
+  }, [code]);
 
-    return (
-        <div className="preview-panel">
-            <div className="preview-panel__header">
-                <span className="preview-panel__title">👁️ Live Preview</span>
-                <div className="preview-panel__actions">
-                    <button
-                        className="preview-panel__action-btn"
-                        onClick={() => {
-                            if (iframeRef.current) {
-                                const html = buildPreviewHTML(code);
-                                const blob = new Blob([html], { type: 'text/html' });
-                                const url = URL.createObjectURL(blob);
-                                iframeRef.current.src = url;
-                            }
-                        }}
-                    >
-                        🔄 Refresh
-                    </button>
-                </div>
-            </div>
-            {error ? (
-                <div className="preview-panel__error">
-                    <span>⚠️ Preview Error</span>
-                    <p>{error}</p>
-                </div>
-            ) : (
-                <iframe
-                    ref={iframeRef}
-                    className="preview-panel__iframe"
-                    title="UI Preview"
-                    sandbox="allow-scripts"
-                />
-            )}
+  return (
+    <div className="preview-panel">
+      <div className="preview-panel__header">
+        <span className="preview-panel__title">Live Preview</span>
+        <div className="preview-panel__actions">
+          <button
+            className="preview-panel__action-btn"
+            onClick={() => {
+              if (iframeRef.current) {
+                const html = buildPreviewHTML(code);
+                const blob = new Blob([html], { type: 'text/html' });
+                const url = URL.createObjectURL(blob);
+                iframeRef.current.src = url;
+              }
+            }}
+          >
+            Refresh
+          </button>
         </div>
-    );
+      </div>
+      {error ? (
+        <div className="preview-panel__error">
+          <span>Preview Error</span>
+          <p>{error}</p>
+        </div>
+      ) : (
+        <iframe
+          ref={iframeRef}
+          className="preview-panel__iframe"
+          title="UI Preview"
+          sandbox="allow-scripts"
+        />
+      )}
+    </div>
+  );
 };
 
 export default PreviewPanel;
