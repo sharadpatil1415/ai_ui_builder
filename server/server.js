@@ -5,7 +5,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { v4 as uuidv4 } from 'uuid';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 import { runPlanner } from './agents/planner.js';
 import { runGenerator } from './agents/generator.js';
 import { runModifier } from './agents/modifier.js';
@@ -242,6 +247,13 @@ app.get('/api/version/:sessionId/:versionId', (req, res) => {
         return res.status(404).json({ error: 'Version not found' });
     }
     res.json(version);
+});
+
+// --- Serve built frontend in production ---
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+app.get('*', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
 });
 
 app.listen(PORT, () => {
