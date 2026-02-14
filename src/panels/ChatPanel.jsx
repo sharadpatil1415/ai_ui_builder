@@ -26,40 +26,57 @@ const ChatPanel = ({ messages, onSend, isLoading, currentVersion, versions, onRo
 
     return (
         <div className="chat-panel">
-            <div className="chat-panel__header">
-                <div className="chat-panel__title">
+            {currentVersion > 0 && (
+                <div className="chat-panel__header">
+                    <button
+                        className={`chat-panel__version-btn ${showVersions ? 'chat-panel__version-btn--active' : ''}`}
+                        onClick={() => setShowVersions(!showVersions)}
+                    >
+                        <span className="chat-panel__version-btn-label">Version History</span>
+                        <span className="chat-panel__version-btn-badge">v{currentVersion}</span>
+                        <span className="chat-panel__version-arrow">{showVersions ? '▲' : '▼'}</span>
+                    </button>
                 </div>
-                <div className="chat-panel__actions">
-                    {versions.length > 0 && (
-                        <button
-                            className="chat-panel__version-btn"
-                            onClick={() => setShowVersions(!showVersions)}
-                        >
-                            v{currentVersion} <span className="chat-panel__version-arrow">{showVersions ? '▲' : '▼'}</span>
-                        </button>
-                    )}
-                </div>
-            </div>
+            )}
 
-            {showVersions && versions.length > 0 && (
+            {showVersions && currentVersion > 0 && (
                 <div className="chat-panel__versions">
-                    <div className="chat-panel__versions-title">Version History</div>
-                    {versions.map((v) => (
-                        <button
-                            key={v.id}
-                            className={`chat-panel__version-item ${v.id === currentVersion ? 'chat-panel__version-item--active' : ''}`}
-                            onClick={() => {
-                                onRollback(v.id);
-                                setShowVersions(false);
-                            }}
-                        >
-                            <span className="chat-panel__version-id">v{v.id}</span>
-                            <span className="chat-panel__version-prompt">{v.userPrompt}</span>
-                            <span className="chat-panel__version-time">
-                                {new Date(v.timestamp).toLocaleTimeString()}
-                            </span>
-                        </button>
-                    ))}
+                    <div className="chat-panel__versions-header">
+                        <span className="chat-panel__versions-title">Select a version to restore</span>
+                        <span className="chat-panel__versions-count">{versions.length} versions</span>
+                    </div>
+                    {versions.length === 0 ? (
+                        <div className="chat-panel__versions-empty">
+                            Send a new prompt to start tracking versions.
+                        </div>
+                    ) : (
+                        versions.slice().reverse().map((v) => (
+                            <button
+                                key={v.id}
+                                className={`chat-panel__version-item ${v.id === currentVersion ? 'chat-panel__version-item--active' : ''}`}
+                                onClick={() => {
+                                    if (v.id !== currentVersion) {
+                                        onRollback(v.id);
+                                        setShowVersions(false);
+                                    }
+                                }}
+                                disabled={v.id === currentVersion}
+                            >
+                                <span className="chat-panel__version-id">v{v.id}</span>
+                                <div className="chat-panel__version-info">
+                                    <span className="chat-panel__version-prompt">{v.userPrompt}</span>
+                                    <span className="chat-panel__version-time">
+                                        {new Date(v.timestamp).toLocaleTimeString()}
+                                    </span>
+                                </div>
+                                {v.id === currentVersion ? (
+                                    <span className="chat-panel__version-current">Current</span>
+                                ) : (
+                                    <span className="chat-panel__version-restore">Restore</span>
+                                )}
+                            </button>
+                        ))
+                    )}
                 </div>
             )}
 

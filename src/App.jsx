@@ -23,13 +23,26 @@ function App() {
     };
 
     const refreshVersions = useCallback(async (sid) => {
+        if (!sid) {
+            console.log('[Debug] Skipping version fetch — no session ID');
+            return;
+        }
         try {
+            console.log('[Debug] Fetching versions for session:', sid);
             const result = await getVersions(sid);
+            console.log('[Debug] Versions result:', result);
             setVersions(result.versions || []);
         } catch (err) {
             console.error('Failed to fetch versions:', err);
         }
     }, []);
+
+    // Auto-refresh versions whenever sessionId changes
+    useEffect(() => {
+        if (sessionId) {
+            refreshVersions(sessionId);
+        }
+    }, [sessionId, refreshVersions]);
 
     const handleSend = useCallback(async (prompt) => {
         addMessage('user', prompt);

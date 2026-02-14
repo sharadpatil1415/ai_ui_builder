@@ -1,15 +1,20 @@
+import { loadSessions, saveSessions } from './storage.js';
+
 // ============================================================
-// In-Memory Version Store
+// Persistent Version Store
 // Stores version history per session for rollback support
 // ============================================================
 
-const sessions = new Map();
+const sessions = loadSessions();
 
 export function createSession(sessionId) {
-    sessions.set(sessionId, {
-        versions: [],
-        createdAt: new Date().toISOString()
-    });
+    if (!sessions.has(sessionId)) {
+        sessions.set(sessionId, {
+            versions: [],
+            createdAt: new Date().toISOString()
+        });
+        saveSessions(sessions);
+    }
 }
 
 export function addVersion(sessionId, { code, plan, explanation, userPrompt, componentsUsed }) {
@@ -29,6 +34,7 @@ export function addVersion(sessionId, { code, plan, explanation, userPrompt, com
     };
 
     session.versions.push(version);
+    saveSessions(sessions);
     return version;
 }
 

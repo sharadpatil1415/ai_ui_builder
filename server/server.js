@@ -36,7 +36,11 @@ app.get('/api/health', (req, res) => {
 // ============================================================
 app.post('/api/generate', async (req, res) => {
     try {
-        const { prompt, sessionId = uuidv4() } = req.body;
+        let { prompt, sessionId } = req.body;
+
+        if (!sessionId) {
+            sessionId = uuidv4();
+        }
 
         if (!prompt || typeof prompt !== 'string' || prompt.trim().length === 0) {
             return res.status(400).json({ error: 'Prompt is required' });
@@ -199,7 +203,9 @@ app.post('/api/modify', async (req, res) => {
 // GET /api/versions/:sessionId — Get version history
 // ============================================================
 app.get('/api/versions/:sessionId', (req, res) => {
+    console.log(`[Versions] Requested for session: ${req.params.sessionId}`);
     const versions = getVersions(req.params.sessionId);
+    console.log(`[Versions] Found ${versions.length} versions`);
     res.json({ versions });
 });
 
@@ -239,6 +245,10 @@ app.get('/api/version/:sessionId/:versionId', (req, res) => {
 });
 
 app.listen(PORT, () => {
+    const maskedKey = process.env.GEMINI_API_KEY ?
+        `${process.env.GEMINI_API_KEY.substring(0, 8)}...${process.env.GEMINI_API_KEY.substring(process.env.GEMINI_API_KEY.length - 4)}` :
+        'NONE';
     console.log(`\n🚀 AI UI Builder server running on http://localhost:${PORT}`);
-    console.log(`   API Key configured: ${process.env.GEMINI_API_KEY ? '✅' : '❌ (set GEMINI_API_KEY in .env)'}`);
+    console.log(`   API Key configured: ${process.env.GEMINI_API_KEY ? '✅' : '❌'}`);
+    console.log(`   Active Key: ${maskedKey}`);
 });
